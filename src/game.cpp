@@ -1,7 +1,7 @@
 #include "include/raylib.h"
 #include "game.h"
 
-// function called on every frame from the dll
+// function called on every frame from the dll, loop
 void UpdateAndRender(GameState *gameState)
 {
     // init, called once
@@ -11,7 +11,6 @@ void UpdateAndRender(GameState *gameState)
         gameState->initialized = 1;
     }
 
-    // loop
     BeginDrawing();
     {
         ClearBackground(BLACK);

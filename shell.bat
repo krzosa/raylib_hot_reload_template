@@ -1,3 +1,4 @@
+@echo off
 REM Path to the vcvarsall script from Visual Studio, sets the terminal up for development
 REM injects msvc compiler into the path, ("cl" command)
 
