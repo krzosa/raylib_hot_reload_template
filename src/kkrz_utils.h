@@ -26,7 +26,8 @@ struct Vector2
 #endif
 typedef Vector2 v2;
 
-inline static v2 operator*(const v2 a, const float scalar)
+inline v2
+operator*(const v2 a, const float scalar)
 {
     v2 result;
     result.x = a.x * scalar;
@@ -35,7 +36,8 @@ inline static v2 operator*(const v2 a, const float scalar)
     return result;
 }
 
-inline static v2 operator+(const v2 a, const v2 b)
+inline v2
+operator+(const v2 a, const v2 b)
 {
     v2 result;
     result.x = a.x + b.x;
@@ -44,7 +46,8 @@ inline static v2 operator+(const v2 a, const v2 b)
     return result;
 }
 
-inline static v2 operator-(const v2 a, const v2 b)
+inline v2
+operator-(const v2 a, const v2 b)
 {
     v2 result;
     result.x = a.x - b.x;
@@ -53,7 +56,8 @@ inline static v2 operator-(const v2 a, const v2 b)
     return result;
 }
 
-inline static v2 operator-(const v2 a)
+inline v2
+operator-(const v2 a)
 {
     v2 result;
     result.x = -a.x;
@@ -62,7 +66,8 @@ inline static v2 operator-(const v2 a)
     return result;
 }
 
-f32 clampFloat(f32 val, f32 min, f32 max)
+inline f32
+Clamp(f32 val, f32 min, f32 max)
 {
     if (val > max)
         return max;
@@ -71,7 +76,8 @@ f32 clampFloat(f32 val, f32 min, f32 max)
     return val;
 }
 
-i32 clampInt(i32 val, i32 min, i32 max)
+inline i32
+Clamp(i32 val, i32 min, i32 max)
 {
     if (val > max)
         return max;
