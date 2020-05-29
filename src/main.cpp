@@ -1,7 +1,7 @@
 #include "include/raylib.h"
 #include "game.h"
 /* WIN32 */
-#define _X86_
+#define _AMD64_
 #include "libloaderapi.h"
 #include "WinDef.h"
 #include "winbase.h"

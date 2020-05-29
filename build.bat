@@ -17,3 +17,4 @@ REM /Od - disables optimization and speeds up compilation (for debugging)
 REM /Zi - generate debugger files
 REM /Debug:Fastlink - https://docs.microsoft.com/en-us/cpp/build/reference/debug-generate-debug-info?view=vs-2019
 REM -incremental:no -opt:ref - https://docs.microsoft.com/en-us/cpp/build/reference/incremental-link-incrementally?view=vs-2019
+REM /EHsc - for c++ vector library 
