@@ -84,6 +84,7 @@ int main(void)
     }
 
     InitWindow(screenWidth, screenHeight, "Game");
+    bool codeEditingMode = 0;
 
     win32_game_code gameCode = {};
     gameCode = Win32LoadGameCode(mainDllPath, tempDllPath);
@@ -93,6 +94,23 @@ int main(void)
     SetTargetFPS(60);
     while (!WindowShouldClose())
     {
+        // small utility that makes the window transparent, puts it on top of other windows
+        // and removes the window decoration, its great for editing with hot reload
+        if(IsKeyPressed(KEY_F5) && codeEditingMode)
+        {
+            SetWindowOpacity(0.5);
+            SetWindowAlwaysOnTop(1);
+            SetWindowDecoration(0);
+            codeEditingMode = 0;
+        }
+        else if(IsKeyPressed(KEY_F5) && !codeEditingMode)
+        {
+            SetWindowOpacity(1);
+            SetWindowAlwaysOnTop(0);
+            SetWindowDecoration(1);
+            codeEditingMode = 1;
+        }
+
         long dllFileWriteTime = GetFileModTime(mainDllPath);
         if (dllFileWriteTime != gameCode.lastDllWriteTime)
         {

@@ -7,16 +7,18 @@
         {
             "label": "build",
             "type": "shell",
-            "command": "build.bat",
+            "command": "shell.bat > nul 2>&1 && build.bat",
             "problemMatcher": [
                 "$msCompile"
             ],
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
-            "windows": {
-                "command": "call \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Auxiliary\\Build\\vcvarsall.bat\" x86 && ${cwd}\\build.bat"
-            }
+        },
+        {
+            "label": "build and run",
+            "type": "shell",
+            "command": "shell.bat > nul 2>&1 && build.bat && run.bat",
+            "problemMatcher": [
+                "$msCompile"
+            ],
         },
         {
             "label": "run",
