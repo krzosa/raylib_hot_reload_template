@@ -1,4 +1,3 @@
-#include "include/raylib.h"
 #include "game.h"
 
 // function called on every frame from the dll, loop
@@ -13,7 +12,7 @@ void UpdateAndRender(GameState *gameState)
 
     BeginDrawing();
     {
-        ClearBackground({0,0,0,100});
+        ClearBackground({0, 0, 0, 100});
         DrawRectangle(100, 100, 100, 100, {150, 255, 255, 255});
     }
     EndDrawing();

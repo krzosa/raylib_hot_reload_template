@@ -1,9 +1,14 @@
+/* My personal header file,
+    contains typedefines, defines I like, useful functions etc.
+*/
+
 #pragma once
-#include <stdint.h>
+#include "stdint.h"
 
 // function internal to the file(obj) its in
 #define internal static
 #define global_variable static
+// persistent variable with local scope, for example global variable declared in main
 #define local_persist static
 
 typedef int8_t i8;
@@ -16,14 +21,7 @@ typedef uint32_t u32;
 typedef uint64_t u64;
 typedef float f32;
 typedef double f64;
-
-#if KKRZ_STANDALONE
-struct Vector2
-{
-    f32 x;
-    f32 y;
-};
-#endif
+typedef int32_t bool32;
 typedef Vector2 v2;
 
 inline v2
@@ -85,3 +83,22 @@ Clamp(i32 val, i32 min, i32 max)
         return min;
     return val;
 }
+
+/* QUICK LOG */
+#define LOGU32(number) TraceLog(LOG_INFO, "%u", number)
+#define LOGI32(number) TraceLog(LOG_INFO, "%d", number)
+#define LOGF32(number) TraceLog(LOG_INFO, "%f", number)
+
+/* TIMER */
+global_variable f64 globalTimer = 0;
+
+internal void StartTimer()
+{
+    globalTimer = GetTime();
+}
+
+internal double StopTimer()
+{
+    return GetTime() - globalTimer;
+}
+/*  */

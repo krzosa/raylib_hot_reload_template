@@ -1,4 +1,3 @@
-#include "include/raylib.h"
 #include "game.h"
 /* WIN32 */
 #define _AMD64_
@@ -13,7 +12,7 @@ UPDATE_AND_RENDER(UpdateAndRenderStub)
 {
 }
 
-struct win32_game_code
+struct Win32GameCode
 {
     HMODULE library;
     long lastDllWriteTime;
@@ -21,10 +20,12 @@ struct win32_game_code
     bool isValid;
 };
 
-static win32_game_code
+// Creates a copy of the main dll, and loads that copy
+// if load fails it substitutes the loaded function with a stub(empty function)
+static Win32GameCode
 Win32LoadGameCode(char *mainDllPath, char *tempDllPath)
 {
-    win32_game_code Result;
+    Win32GameCode Result;
     Result.lastDllWriteTime = GetFileModTime(tempDllPath);
 
     CopyFileA((LPCSTR)mainDllPath, (LPCSTR)tempDllPath, FALSE);
@@ -51,7 +52,7 @@ Win32LoadGameCode(char *mainDllPath, char *tempDllPath)
 
 /* Unloads the dll and nulls the pointers to functions from the dll */
 static void
-Win32UnloadGameCode(win32_game_code *GameCode)
+Win32UnloadGameCode(Win32GameCode *GameCode)
 {
     if (GameCode->library)
     {
@@ -86,7 +87,7 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "Game");
     bool codeEditingMode = 0;
 
-    win32_game_code gameCode = {};
+    Win32GameCode gameCode = {};
     gameCode = Win32LoadGameCode(mainDllPath, tempDllPath);
 
     GameState gameState = {};
@@ -96,14 +97,15 @@ int main(void)
     {
         // small utility that makes the window transparent, puts it on top of other windows
         // and removes the window decoration, its great for editing with hot reload
-        if(IsKeyPressed(KEY_F5) && codeEditingMode)
+        // activated with F5
+        if (IsKeyPressed(KEY_F5) && codeEditingMode)
         {
             SetWindowOpacity(0.5);
             SetWindowAlwaysOnTop(1);
             SetWindowDecoration(0);
             codeEditingMode = 0;
         }
-        else if(IsKeyPressed(KEY_F5) && !codeEditingMode)
+        else if (IsKeyPressed(KEY_F5) && !codeEditingMode)
         {
             SetWindowOpacity(1);
             SetWindowAlwaysOnTop(0);

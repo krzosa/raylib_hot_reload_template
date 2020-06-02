@@ -1,12 +1,12 @@
 ## Info
 
-Template for a game/game engine (32bit). 
+Template for a game/game engine (64bit MSVC 2019 / VS 2019 / MS Build Tools 2019). 
 
 * Sets up hot reload, so we can recompile the code while the application is running and automatically apply the changes without losing game state, very convenient for games and doesn't impact performance. 
-* Sets up raylib along with it (which is an amazing library for developing games)
+* Sets up a modified version of raylib along with it (which is an amazing library for developing games) (I added some utility functions to the library SetWindowOpacity, SetWindowDecoration, SetWindowAlwaysOnTop)
 * Sets up raygui (which is a library by the same author specializing in graphical user interfaces)
 * Sets up compiling scripts for msvc compiler (compiler from windows build tools / visual studio)
-* Sets up compiling through vscode
+* Sets up compiling through vscode, couple different vscode tasks
 
 ## Structure
 
