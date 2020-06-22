@@ -6,18 +6,30 @@
 #include "winbase.h"
 /*  */
 
-#define UPDATE_AND_RENDER(name) void name(GameState *gameState)
-typedef UPDATE_AND_RENDER(UpdateAndRender);
-UPDATE_AND_RENDER(UpdateAndRenderStub)
-{
-}
+// NOTE: prototypes for function pointers
+typedef void Initialize(GameState *gameState);
+typedef void HotReload(GameState *gameState);
+typedef bool Update(GameState *gameState);
+typedef void Exit(GameState *gameState);
+
+// NOTE: empty functions meant to be replacements when
+// functions from the dll fail to load
+void InitializeStub(GameState *gameState){}
+void HotReloadStub(GameState *gameState){}
+bool UpdateStub(GameState *gameState){return 1;}
+void ExitStub(GameState *gameState){}
 
 struct Win32GameCode
 {
     HMODULE library;
     long lastDllWriteTime;
-    UpdateAndRender *UpdateAndRender;
     bool isValid;
+
+    // NOTE: function pointers
+    Initialize *initialize;
+    HotReload *hotReload;
+    Update *update;
+    Exit *exit;
 };
 
 // Creates a copy of the main dll, and loads that copy
@@ -25,29 +37,39 @@ struct Win32GameCode
 static Win32GameCode
 Win32LoadGameCode(char *mainDllPath, char *tempDllPath)
 {
-    Win32GameCode Result;
-    Result.lastDllWriteTime = GetFileModTime(tempDllPath);
+    Win32GameCode result;
+    result.lastDllWriteTime = GetFileModTime(tempDllPath);
 
     CopyFileA((LPCSTR)mainDllPath, (LPCSTR)tempDllPath, FALSE);
-    Result.library = LoadLibraryA(tempDllPath);
+    result.library = LoadLibraryA(tempDllPath);
     TraceLog(LOG_INFO, "Load game code");
-    Result.isValid = 1;
-    if (Result.library)
-    {
-        Result.UpdateAndRender = (UpdateAndRender *)
-            GetProcAddress(Result.library, "UpdateAndRender");
+    result.isValid = 1;
 
-        Result.isValid = (Result.UpdateAndRender != 0);
+    // NOTE: Load the functions from the game dll
+    if (result.library)
+    {
+        result.initialize = (Initialize *)GetProcAddress(result.library, "Initialize");
+        result.hotReload = (HotReload *)GetProcAddress(result.library, "HotReload");
+        result.update = (Update *)GetProcAddress(result.library, "Update");
+        result.exit = (Exit *)GetProcAddress(result.library, "Exit");
+
+        result.isValid = (result.update != 0) && (result.exit != 0) &&
+                        (result.hotReload != 0) && (result.initialize != 0);
     }
 
-    if (Result.isValid == 0)
+    // NOTE: if functions failed to load, load the stubs
+    if (result.isValid == 0)
     {
-        Result.UpdateAndRender = UpdateAndRenderStub;
+        result.update = UpdateStub;
+        result.initialize = InitializeStub;
+        result.hotReload = HotReloadStub;
+        result.exit = ExitStub;
+        
         TraceLog(LOG_INFO, "FAILED TO LOAD LIBRARY");
     }
 
-    TraceLog(LOG_INFO, "GameCode valid? = %d", Result.isValid);
-    return Result;
+    TraceLog(LOG_INFO, "GameCode valid? = %d", result.isValid);
+    return result;
 }
 
 /* Unloads the dll and nulls the pointers to functions from the dll */
@@ -58,7 +80,10 @@ Win32UnloadGameCode(Win32GameCode *GameCode)
     {
         FreeLibrary(GameCode->library);
         GameCode->library = 0;
-        GameCode->UpdateAndRender = UpdateAndRenderStub;
+        GameCode->initialize = InitializeStub;
+        GameCode->hotReload = HotReloadStub;
+        GameCode->update = UpdateStub;
+        GameCode->exit = ExitStub;
         TraceLog(LOG_INFO, "Unload game code");
     }
 
@@ -67,10 +92,7 @@ Win32UnloadGameCode(Win32GameCode *GameCode)
 
 int main(void)
 {
-    const int screenWidth = 800;
-    const int screenHeight = 450;
-
-    /* build paths to dll files */
+    /* NOTE: build paths to dll files */
     const char *basePath = GetWorkingDirectory();
     char mainDllPath[MAX_PATH];
     char tempDllPath[MAX_PATH];
@@ -83,36 +105,17 @@ int main(void)
         TraceLog(LOG_INFO, mainDllPath);
         TraceLog(LOG_INFO, tempDllPath);
     }
-
-    InitWindow(screenWidth, screenHeight, "Game");
-    bool codeEditingMode = 0;
-
     Win32GameCode gameCode = {};
+    GameState gameState = {};
     gameCode = Win32LoadGameCode(mainDllPath, tempDllPath);
 
-    GameState gameState = {};
+    gameCode.initialize(&gameState);
 
-    SetTargetFPS(60);
-    while (!WindowShouldClose())
+    
+
+    bool isRunning = 1;
+    while (isRunning)
     {
-        // small utility that makes the window transparent, puts it on top of other windows
-        // and removes the window decoration, its great for editing with hot reload
-        // activated with F5
-        if (IsKeyPressed(KEY_F5) && codeEditingMode)
-        {
-            SetWindowOpacity(0.5);
-            SetWindowAlwaysOnTop(1);
-            SetWindowDecoration(0);
-            codeEditingMode = 0;
-        }
-        else if (IsKeyPressed(KEY_F5) && !codeEditingMode)
-        {
-            SetWindowOpacity(1);
-            SetWindowAlwaysOnTop(0);
-            SetWindowDecoration(1);
-            codeEditingMode = 1;
-        }
-
         long dllFileWriteTime = GetFileModTime(mainDllPath);
         if (dllFileWriteTime != gameCode.lastDllWriteTime)
         {
@@ -120,9 +123,9 @@ int main(void)
             gameCode = Win32LoadGameCode(mainDllPath, tempDllPath);
         }
 
-        gameCode.UpdateAndRender(&gameState);
+        isRunning = gameCode.update(&gameState);
     }
-    CloseWindow();
+    gameCode.exit(&gameState);
 
     return 0;
 }

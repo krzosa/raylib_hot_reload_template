@@ -1,7 +1,3 @@
-/* My personal header file,
-    contains typedefines, defines I like, useful functions etc.
-*/
-
 #pragma once
 #include "stdint.h"
 
@@ -22,83 +18,18 @@ typedef uint64_t u64;
 typedef float f32;
 typedef double f64;
 typedef int32_t bool32;
-typedef Vector2 v2;
 
-inline v2
-operator*(const v2 a, const float scalar)
+typedef union v2
 {
-    v2 result;
-    result.x = a.x * scalar;
-    result.y = a.y * scalar;
+    struct
+    {
+        f32 x;
+        f32 y;
+    };
 
-    return result;
-}
-
-inline v2
-operator+(const v2 a, const v2 b)
-{
-    v2 result;
-    result.x = a.x + b.x;
-    result.y = a.y + b.y;
-
-    return result;
-}
-
-inline v2
-operator-(const v2 a, const v2 b)
-{
-    v2 result;
-    result.x = a.x - b.x;
-    result.y = a.y - b.y;
-
-    return result;
-}
-
-inline v2
-operator-(const v2 a)
-{
-    v2 result;
-    result.x = -a.x;
-    result.y = -a.y;
-
-    return result;
-}
-
-inline f32
-Clamp(f32 val, f32 min, f32 max)
-{
-    if (val > max)
-        return max;
-    else if (val < min)
-        return min;
-    return val;
-}
-
-inline i32
-Clamp(i32 val, i32 min, i32 max)
-{
-    if (val > max)
-        return max;
-    else if (val < min)
-        return min;
-    return val;
-}
-
-/* QUICK LOG */
-#define LOGU32(number) TraceLog(LOG_INFO, "%u", number)
-#define LOGI32(number) TraceLog(LOG_INFO, "%d", number)
-#define LOGF32(number) TraceLog(LOG_INFO, "%f", number)
-
-/* TIMER */
-global_variable f64 globalTimer = 0;
-
-internal void StartTimer()
-{
-    globalTimer = GetTime();
-}
-
-internal double StopTimer()
-{
-    return GetTime() - globalTimer;
-}
-/*  */
+    struct
+    {
+        f32 width;
+        f32 height;
+    };
+} v2;
