@@ -39,8 +39,3 @@ void Initialize(GameState *gameState)
 {
     
 }
-void HotUnload(GameState *gameState)
-{
-    TraceLog(LOG_INFO, "UNLOAD");
-    
-}

@@ -6,16 +6,14 @@
 #include "winbase.h"
 
 // NOTE: prototypes for function pointers
-typedef void Initialize(GameState *gameState);
-typedef void HotReload(GameState *gameState);
-typedef bool Update(GameState *gameState);
-typedef void HotUnload(GameState *gameState);
+typedef void Initialize(GameState *gameState); // called at the beginning of the app
+typedef void HotReload(GameState *gameState); // called on hot reload
+typedef bool Update(GameState *gameState); // called on every frame
 
 // NOTE: empty functions meant to be replacements when
 // functions from the dll fail to load
 void InitializeStub(GameState *gameState){}
 void HotReloadStub(GameState *gameState){}
-void HotUnloadStub(GameState *gameState){}
 bool UpdateStub(GameState *gameState){return 1;}
 
 struct Win32GameCode
@@ -27,7 +25,6 @@ struct Win32GameCode
     // NOTE: pointers to functions from the dll
     Initialize *initialize;
     HotReload *hotReload;
-    HotUnload *hotUnload;
     Update *update;
 };
 
@@ -49,10 +46,9 @@ Win32LoadGameCode(char *mainDllPath, char *tempDllPath)
     {
         result.initialize = (Initialize *)GetProcAddress(result.library, "Initialize");
         result.hotReload = (HotReload *)GetProcAddress(result.library, "HotReload");
-        result.hotUnload = (HotUnload *)GetProcAddress(result.library, "HotUnload");
         result.update = (Update *)GetProcAddress(result.library, "Update");
 
-        result.isValid = (result.update != 0) && (result.hotUnload != 0) &&
+        result.isValid = (result.update != 0) &&
                         (result.hotReload != 0) && (result.initialize != 0);
     }
 
@@ -62,7 +58,6 @@ Win32LoadGameCode(char *mainDllPath, char *tempDllPath)
         result.update = UpdateStub;
         result.initialize = InitializeStub;
         result.hotReload = HotReloadStub;
-        result.hotUnload = HotUnloadStub;
         
         TraceLog(LOG_ERROR, "FAILED TO LOAD LIBRARY");
     }
@@ -82,7 +77,6 @@ Win32UnloadGameCode(Win32GameCode *GameCode)
         GameCode->initialize = InitializeStub;
         GameCode->hotReload = HotReloadStub;
         GameCode->update = UpdateStub;
-        GameCode->hotUnload = HotUnloadStub;
         TraceLog(LOG_INFO, "Unload game code");
     }
 
@@ -117,17 +111,31 @@ int main(void)
     gameCode.initialize(&gameState);
 
     bool isRunning = 1;
+    bool hotReload = 0;
+    double timeSinceHotReload;
+
     while (isRunning)
     {
+        // NOTE: prevents calling HotReload multiple times
+        if(hotReload && GetTime() > timeSinceHotReload + 2)
+            hotReload = 0;
+
         long dllFileWriteTime = GetFileModTime(mainDllPath);
         if (dllFileWriteTime != gameCode.lastDllWriteTime)
         {
             Win32UnloadGameCode(&gameCode);
             gameCode = Win32LoadGameCode(mainDllPath, tempDllPath);
-            gameCode.hotReload(&gameState);
-            // TODO: Prevent hotReload to be called multiple times
+
+            // NOTE: prevents calling HotReload multiple times
+            if(!hotReload)
+            {
+                gameCode.hotReload(&gameState);
+                timeSinceHotReload = GetTime();
+                hotReload = 1;
+            }
         }
 
+        
         isRunning = gameCode.update(&gameState);
     }
     CloseWindow();
