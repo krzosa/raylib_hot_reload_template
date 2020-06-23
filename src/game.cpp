@@ -33,15 +33,14 @@ bool Update(GameState *gameState)
 }
 void HotReload(GameState *gameState)
 {
-    
+    TraceLog(LOG_INFO, "HOTRELOAD");
 }
 void Initialize(GameState *gameState)
 {
-    InitWindow(800, 450, "Game");
-    SetTargetFPS(60);
     
 }
-void Exit(GameState *gameState)
+void HotUnload(GameState *gameState)
 {
-    CloseWindow();
+    TraceLog(LOG_INFO, "UNLOAD");
+    
 }

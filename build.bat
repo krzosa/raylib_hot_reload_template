@@ -1,7 +1,7 @@
 @echo off
 
 set LINKER_FLAGS=/link ..\lib\raylib.lib kernel32.lib user32.lib shell32.lib winmm.lib gdi32.lib opengl32.lib -incremental:no -opt:ref
-set EXPORTED_FUNCTIONS=/EXPORT:Update /EXPORT:Initialize /EXPORT:HotReload /EXPORT:Exit
+set EXPORTED_FUNCTIONS=/EXPORT:Update /EXPORT:Initialize /EXPORT:HotReload /EXPORT:HotUnload
 set COMMON_FLAGS=/Od /Zi /nologo 
 set WARNING_FLAGS=/Wall /wd4514 /wd4820 /wd5045 /wd4365
 set EXE_NAME=/Fe: "game"
