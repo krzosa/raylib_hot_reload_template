@@ -16,7 +16,7 @@ void InitializeStub(GameState *gameState){}
 void HotReloadStub(GameState *gameState){}
 bool UpdateStub(GameState *gameState){return 1;}
 
-struct Win32GameCode
+typedef struct Win32GameCode
 {
     HMODULE library;
     long lastDllWriteTime;
@@ -26,7 +26,7 @@ struct Win32GameCode
     Initialize *initialize;
     HotReload *hotReload;
     Update *update;
-};
+} Win32GameCode;
 
 // Creates a copy of the main dll, and loads that copy
 // if load fails it substitutes the loaded function with a stub(empty function)
@@ -37,8 +37,8 @@ Win32LoadGameCode(char *mainDllPath, char *tempDllPath)
     result.lastDllWriteTime = GetFileModTime(tempDllPath);
 
     CopyFileA((LPCSTR)mainDllPath, (LPCSTR)tempDllPath, FALSE);
+    
     result.library = LoadLibraryA(tempDllPath);
-    TraceLog(LOG_INFO, "Load game code");
     result.isValid = 1;
 
     // NOTE: Load the functions from the game dll
@@ -62,7 +62,7 @@ Win32LoadGameCode(char *mainDllPath, char *tempDllPath)
         TraceLog(LOG_ERROR, "FAILED TO LOAD LIBRARY");
     }
 
-    TraceLog(LOG_INFO, "GameCode valid? = %d", result.isValid);
+    TraceLog(LOG_DEBUG, "GameCode valid? = %d", result.isValid);
     return result;
 }
 
@@ -77,7 +77,7 @@ Win32UnloadGameCode(Win32GameCode *GameCode)
         GameCode->initialize = InitializeStub;
         GameCode->hotReload = HotReloadStub;
         GameCode->update = UpdateStub;
-        TraceLog(LOG_INFO, "Unload game code");
+        TraceLog(LOG_DEBUG, "Unload game code");
     }
 
     GameCode->isValid = false;
@@ -105,8 +105,8 @@ int main(void)
         TraceLog(LOG_INFO, tempDllPath);
     }
 
-    Win32GameCode gameCode = {};
-    GameState gameState = {};
+    Win32GameCode gameCode = {0};
+    GameState gameState = {0};
     gameCode = Win32LoadGameCode(mainDllPath, tempDllPath);
     gameCode.initialize(&gameState);
 

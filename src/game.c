@@ -24,8 +24,8 @@ bool Update(GameState *gameState)
 
     BeginDrawing();
     {
-        ClearBackground({0, 0, 0, 100});
-        DrawRectangle(100, 100, 100, 100, {150, 255, 255, 255});
+        ClearBackground((Color){0, 0, 0, 100});
+        DrawRectangle(100, 100, 100, 100, (Color){150, 255, 255, 255});
     }
     EndDrawing();
 

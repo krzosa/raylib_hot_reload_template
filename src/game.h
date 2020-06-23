@@ -1,7 +1,7 @@
 #include "include/raylib.h"
 
-struct GameState
+typedef struct GameState
 {
-    bool codeEditingMode = 0;
+    bool codeEditingMode;
     bool initialized;
-};
+} GameState;
