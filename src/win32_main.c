@@ -1,4 +1,4 @@
-#include "game.h"
+#include "shared.h"
 /* WIN32 */
 #define _AMD64_
 #include "libloaderapi.h"
@@ -85,8 +85,8 @@ Win32UnloadGameCode(Win32GameCode *GameCode)
 
 int main(void)
 {
-    InitWindow(800, 450, "Game");
-    SetTargetFPS(60);
+    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, APP_TITLE);
+    SetTargetFPS(APP_FPS);
 
     const char *basePath = GetWorkingDirectory();
     char mainDllPath[MAX_PATH];
@@ -104,35 +104,21 @@ int main(void)
         TraceLog(LOG_INFO, mainDllPath);
         TraceLog(LOG_INFO, tempDllPath);
     }
-
     Win32GameCode gameCode = {0};
-    GameState gameState = {0};
     gameCode = Win32LoadGameCode(mainDllPath, tempDllPath);
+
+    GameState gameState = {0};
     gameCode.initialize(&gameState);
 
     bool isRunning = 1;
-    bool hotReload = 0;
-    double timeSinceHotReload;
-
-    while (isRunning)
+    while(isRunning)
     {
-        // NOTE: prevents calling HotReload multiple times
-        if(hotReload && GetTime() > timeSinceHotReload + 2)
-            hotReload = 0;
-
         long dllFileWriteTime = GetFileModTime(mainDllPath);
         if (dllFileWriteTime != gameCode.lastDllWriteTime)
         {
             Win32UnloadGameCode(&gameCode);
             gameCode = Win32LoadGameCode(mainDllPath, tempDllPath);
-
-            // NOTE: prevents calling HotReload multiple times
-            if(!hotReload)
-            {
-                gameCode.hotReload(&gameState);
-                timeSinceHotReload = GetTime();
-                hotReload = 1;
-            }
+            gameCode.hotReload(&gameState);
         }
 
         

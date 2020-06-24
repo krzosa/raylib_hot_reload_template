@@ -5,7 +5,7 @@
         {
             "label": "build",
             "type": "shell",
-            "command": "shell.bat > nul 2>&1 && build.bat",
+            "command": "shell.bat > nul 2>&1 && msvc-build.bat",
             "problemMatcher": [
                 "$msCompile"
             ],
@@ -13,7 +13,7 @@
         {
             "label": "build and run",
             "type": "shell",
-            "command": "shell.bat > nul 2>&1 && build.bat && run.bat",
+            "command": "shell.bat > nul 2>&1 && msvc-build.bat && run.bat",
             "problemMatcher": [
                 "$msCompile"
             ],

@@ -10,7 +10,7 @@ Template for a game/game engine (64bit MSVC 2019 / VS 2019 / MS Build Tools 2019
 
 ## Structure
 
-* main.cpp -> Loads the dll and calls UpdateAndRender from the dll in a loop. On every iteration checks if the dll changed, if it did then it swaps the code 
-* game.cpp -> Gamecode(dll), this is where you actually write the engine, game etc. It has one function UpdateAndRender which is called inside the executable. 
-* game.cpp -> UpdateAndRender -> main loop. This is the function called inside the executable on every loop iteration
+* main.cpp -> Loads the dll and calls Update from the dll in a loop. On every iteration checks if the dll changed, if it did then it swaps the code 
+* game.cpp -> Gamecode(dll), this is where you actually write the engine, game etc. It has one function Update which is called inside the executable. 
+* game.cpp -> Update -> main loop. This is the function called inside the executable on every loop iteration
 * game.h -> GameState declaration which contains all the information about the game. It belongs to the executable so that the gameState wont be lost on library reload
