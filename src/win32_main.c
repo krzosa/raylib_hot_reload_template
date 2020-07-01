@@ -1,87 +1,11 @@
 #include "shared.h"
 /* WIN32 */
 #define _AMD64_
-#include "libloaderapi.h"
 #include "WinDef.h"
 #include "winbase.h"
+#include "libloaderapi.h"
+#include "win32_hot_reload.c"
 
-// NOTE: prototypes for function pointers
-typedef void Initialize(GameState *gameState); // called at the beginning of the app
-typedef void HotReload(GameState *gameState); // called on hot reload
-typedef bool Update(GameState *gameState); // called on every frame
-
-// NOTE: empty functions meant to be replacements when
-// functions from the dll fail to load
-void InitializeStub(GameState *gameState){}
-void HotReloadStub(GameState *gameState){}
-bool UpdateStub(GameState *gameState){return 1;}
-
-typedef struct Win32GameCode
-{
-    HMODULE library;
-    long lastDllWriteTime;
-    bool isValid;
-
-    // NOTE: pointers to functions from the dll
-    Initialize *initialize;
-    HotReload *hotReload;
-    Update *update;
-} Win32GameCode;
-
-// Creates a copy of the main dll, and loads that copy
-// if load fails it substitutes the loaded function with a stub(empty function)
-static Win32GameCode
-Win32LoadGameCode(char *mainDllPath, char *tempDllPath)
-{
-    Win32GameCode result;
-    result.lastDllWriteTime = GetFileModTime(tempDllPath);
-
-    CopyFileA((LPCSTR)mainDllPath, (LPCSTR)tempDllPath, FALSE);
-    
-    result.library = LoadLibraryA(tempDllPath);
-    result.isValid = 1;
-
-    // NOTE: Load the functions from the game dll
-    if (result.library)
-    {
-        result.initialize = (Initialize *)GetProcAddress(result.library, "Initialize");
-        result.hotReload = (HotReload *)GetProcAddress(result.library, "HotReload");
-        result.update = (Update *)GetProcAddress(result.library, "Update");
-
-        result.isValid = (result.update != 0) &&
-                        (result.hotReload != 0) && (result.initialize != 0);
-    }
-
-    // NOTE: if functions failed to load, load the stubs
-    if (result.isValid == 0)
-    {
-        result.update = UpdateStub;
-        result.initialize = InitializeStub;
-        result.hotReload = HotReloadStub;
-        
-        TraceLog(LOG_ERROR, "FAILED TO LOAD LIBRARY");
-    }
-
-    TraceLog(LOG_DEBUG, "GameCode valid? = %d", result.isValid);
-    return result;
-}
-
-/* Unloads the dll and nulls the pointers to functions from the dll */
-static void
-Win32UnloadGameCode(Win32GameCode *GameCode)
-{
-    if (GameCode->library)
-    {
-        FreeLibrary(GameCode->library);
-        GameCode->library = 0;
-        GameCode->initialize = InitializeStub;
-        GameCode->hotReload = HotReloadStub;
-        GameCode->update = UpdateStub;
-        TraceLog(LOG_DEBUG, "Unload game code");
-    }
-
-    GameCode->isValid = false;
-}
 
 int main(void)
 {
@@ -111,7 +35,8 @@ int main(void)
     gameCode.initialize(&gameState);
 
     bool isRunning = 1;
-    while(isRunning)
+    bool codeEditMode = 1;
+    while(!WindowShouldClose())
     {
         long dllFileWriteTime = GetFileModTime(mainDllPath);
         if (dllFileWriteTime != gameCode.lastDllWriteTime)
@@ -121,8 +46,25 @@ int main(void)
             gameCode.hotReload(&gameState);
         }
 
+        // small utility that makes the window transparent, puts it on top of other windows
+        // and removes the window decoration, its great for editing with hot reload
+        // activated with F5
+        if (IsKeyPressed(KEY_F5) && codeEditMode)
+        {
+            SetWindowOpacity(0.5);
+            SetWindowAlwaysOnTop(1);
+            SetWindowDecoration(0);
+            codeEditMode = 0;
+        }
+        else if (IsKeyPressed(KEY_F5) && !codeEditMode)
+        {
+            SetWindowOpacity(1);
+            SetWindowAlwaysOnTop(0);
+            SetWindowDecoration(1);
+            codeEditMode = 1;
+        }
         
-        isRunning = gameCode.update(&gameState);
+        gameCode.update(&gameState);
     }
     CloseWindow();
 
