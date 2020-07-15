@@ -997,23 +997,6 @@ void SetWindowSize(int width, int height)
 #endif
 }
 
-void SetWindowOpacity(float opacity)
-{
-    glfwSetWindowOpacity(CORE.Window.handle, opacity);
-}
-
-void SetWindowAlwaysOnTop(bool choice)
-{
-    glfwSetWindowAttrib(CORE.Window.handle, GLFW_FLOATING, choice);
-}
-
-void SetWindowDecoration(bool choice)
-{
-    glfwSetWindowAttrib(CORE.Window.handle, GLFW_DECORATED, choice);
-}
-
-
-
 // Show the window
 void UnhideWindow(void)
 {

@@ -54,7 +54,7 @@ RAYLIB_PATH        = ..
 PLATFORM             ?= PLATFORM_DESKTOP
 
 # Library type used for raylib: STATIC (.a) or SHARED (.so/.dll)
-RAYLIB_LIBTYPE       ?= SHARED
+RAYLIB_LIBTYPE       ?= STATIC
 
 # Build mode for library: DEBUG or RELEASE
 RAYLIB_BUILD_MODE    ?= RELEASE
@@ -187,11 +187,11 @@ ifeq ($(PLATFORM),PLATFORM_ANDROID)
 endif
 
 # Define raylib source code path
-RAYLIB_SRC_PATH ?= $(RAYLIB_PATH)/raylib
+RAYLIB_SRC_PATH ?= $(RAYLIB_PATH)/src
 
-# Define output directory for compiled library, defaults to raylib directory
+# Define output directory for compiled library, defaults to src directory
 # NOTE: If externally provided, make sure directory exists
-RAYLIB_RELEASE_PATH  ?= $(RAYLIB_PATH)/raylib
+RAYLIB_RELEASE_PATH  ?= $(RAYLIB_PATH)/src
 
 # Define raylib graphics api depending on selected platform
 ifeq ($(PLATFORM),PLATFORM_DESKTOP)

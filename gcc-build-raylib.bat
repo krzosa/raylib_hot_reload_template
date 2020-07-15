@@ -1,9 +1,11 @@
 @echo off
 
-cd src\raylib
+cd src\raylib\src
 
-mingw32-make.exe
-copy raylib.dll   ..\..\bin
-copy libraylib.dll.a ..\..\bin
+mingw32-make.exe RAYLIB_LIBTYPE=SHARED
 
-cd ..\..
+copy raylib.h        ..
+copy raylib.dll      ..\..\..\bin
+copy libraylib.dll.a ..\..\..\bin
+
+cd ..\..\..

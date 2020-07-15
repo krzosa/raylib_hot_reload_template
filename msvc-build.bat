@@ -8,7 +8,7 @@ set DLL_NAME=/Fe: "game_code"
 
 cd bin
 
-cl ..\src\game.c  /LD            %DLL_NAME% %COMMON_FLAGS% %LINKER_FLAGS% %EXPORTED_FUNCTIONS%
+cl ..\src\hotloaded_main.c  /LD            %DLL_NAME% %COMMON_FLAGS% %LINKER_FLAGS% %EXPORTED_FUNCTIONS%
 cl ..\src\win32_main.c -D_AMD64_ %EXE_NAME% %COMMON_FLAGS% %LINKER_FLAGS%
 
 cd ..

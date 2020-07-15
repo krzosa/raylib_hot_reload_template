@@ -7,6 +7,5 @@
 
 typedef struct GameState
 {
-    bool codeEditingMode;
-    bool initialized;
+    int veryCoolGameData;
 } GameState;

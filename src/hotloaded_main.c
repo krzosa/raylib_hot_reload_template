@@ -1,6 +1,5 @@
 #include "shared.h"
 
-
 void Update(GameState *gameState)
 {
     BeginDrawing();
