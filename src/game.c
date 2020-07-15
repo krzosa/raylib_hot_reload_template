@@ -1,6 +1,6 @@
 #include "shared.h"
 
-// function called on every frame from the dll, loop
+
 void Update(GameState *gameState)
 {
     BeginDrawing();

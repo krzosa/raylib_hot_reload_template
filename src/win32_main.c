@@ -1,6 +1,5 @@
 #include "shared.h"
 /* WIN32 */
-#define _AMD64_
 #include "WinDef.h"
 #include "winbase.h"
 #include "libloaderapi.h"
@@ -63,6 +62,7 @@ int main(void)
             SetWindowDecoration(1);
             codeEditMode = 1;
         }
+        
         
         gameCode.update(&gameState);
     }

@@ -6,3 +6,5 @@
 *.ilk
 *.exp
 *.lib
+*.a
+*.o

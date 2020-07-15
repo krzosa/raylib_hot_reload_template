@@ -1,6 +1,6 @@
 @echo off
 
-set LINKER_FLAGS=/link ..\lib\raylib.lib kernel32.lib user32.lib shell32.lib winmm.lib gdi32.lib opengl32.lib -incremental:no -opt:ref
+set LINKER_FLAGS=/link raylib.lib kernel32.lib user32.lib shell32.lib winmm.lib gdi32.lib opengl32.lib -incremental:no -opt:ref
 set EXPORTED_FUNCTIONS=/EXPORT:Update /EXPORT:Initialize /EXPORT:HotReload
 set COMMON_FLAGS=/Zi /nologo 
 set EXE_NAME=/Fe: "game"
@@ -8,8 +8,8 @@ set DLL_NAME=/Fe: "game_code"
 
 cd bin
 
-cl ..\src\game.c  /LD  %DLL_NAME% %COMMON_FLAGS% %LINKER_FLAGS% %EXPORTED_FUNCTIONS%
-cl ..\src\win32_main.c %EXE_NAME% %COMMON_FLAGS% %LINKER_FLAGS%
+cl ..\src\game.c  /LD            %DLL_NAME% %COMMON_FLAGS% %LINKER_FLAGS% %EXPORTED_FUNCTIONS%
+cl ..\src\win32_main.c -D_AMD64_ %EXE_NAME% %COMMON_FLAGS% %LINKER_FLAGS%
 
 cd ..
 
