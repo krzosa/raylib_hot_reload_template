@@ -1,12 +1,14 @@
 // NOTE: prototypes for function pointers
 typedef void Initialize(GameState *gameState); // called at the beginning of the app
-typedef void HotReload(GameState *gameState); // called on hot reload
+typedef void HotReload(GameState *gameState); // called when you recompile the program while its running
+typedef void HotUnload(GameState *gameState); // called before the dynamic libraries get swapped
 typedef void Update(GameState *gameState); // called on every frame
 
 // NOTE: empty functions meant to be replacements when
 // functions from the dll fail to load
 void InitializeStub(GameState *gameState){}
 void HotReloadStub(GameState *gameState){}
+void HotUnloadStub(GameState *gameState){} 
 void UpdateStub(GameState *gameState){}
 
 typedef struct Win32GameCode
@@ -18,6 +20,7 @@ typedef struct Win32GameCode
     // NOTE: pointers to functions from the dll
     Initialize *initialize;
     HotReload *hotReload;
+    HotUnload *hotUnload;
     Update *update;
 } Win32GameCode;
 
@@ -39,6 +42,7 @@ Win32LoadGameCode(char *mainDllPath, char *tempDllPath)
     {
         result.initialize = (Initialize *)GetProcAddress(result.library, "Initialize");
         result.hotReload = (HotReload *)GetProcAddress(result.library, "HotReload");
+        result.hotUnload = (HotUnload *)GetProcAddress(result.library, "HotUnload");
         result.update = (Update *)GetProcAddress(result.library, "Update");
 
         result.isValid = (result.update != 0) &&
@@ -51,6 +55,7 @@ Win32LoadGameCode(char *mainDllPath, char *tempDllPath)
         result.update = UpdateStub;
         result.initialize = InitializeStub;
         result.hotReload = HotReloadStub;
+        result.hotUnload = HotUnloadStub;
         
         TraceLog(LOG_ERROR, "FAILED TO LOAD LIBRARY");
     }
@@ -69,6 +74,7 @@ Win32UnloadGameCode(Win32GameCode *GameCode)
         GameCode->library = 0;
         GameCode->initialize = InitializeStub;
         GameCode->hotReload = HotReloadStub;
+        GameCode->hotUnload = HotUnloadStub;
         GameCode->update = UpdateStub;
         TraceLog(LOG_DEBUG, "Unload game code");
     }

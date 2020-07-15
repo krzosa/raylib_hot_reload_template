@@ -1,5 +1,6 @@
 #include "shared.h"
 
+// Called on every frame
 void Update(GameState *gameState)
 {
     BeginDrawing();
@@ -9,11 +10,22 @@ void Update(GameState *gameState)
     }
     EndDrawing();
 }
+
+// Called when you recompile the program while its running
 void HotReload(GameState *gameState)
 {
     TraceLog(LOG_INFO, "HOTRELOAD");
 }
+
+// Called before the dynamic libraries get swapped
+void HotUnload(GameState *gameState)
+{
+    TraceLog(LOG_INFO, "HOTUNLOAD");
+}
+
+// Called at the the start of the program
 void Initialize(GameState *gameState)
 {
-    TraceLog(LOG_INFO, "INIT");
+    InitWindow(1280, 720, "PLACEHOLDER");
+    SetTargetFPS(60);
 }

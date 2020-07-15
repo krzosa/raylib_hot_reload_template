@@ -4,18 +4,18 @@
 #include "winbase.h"
 #include "libloaderapi.h"
 #include "win32_hot_reload.c"
+#define PATH_SIZE 1024 // might overflow, not a good idea to ship a game with this :)
 
 
 int main(int argumentCount, char *argumentArray[])
 {
-    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, APP_TITLE);
-    SetTargetFPS(APP_FPS);
-
+    // NOTE: first argument of the argumentArray is the relative path
+    //      to the executable
     const char *basePath = GetDirectoryPath(argumentArray[0]);
-    char mainDllPath[MAX_PATH];
-    char tempDllPath[MAX_PATH];
+    char mainDllPath[PATH_SIZE];
+    char tempDllPath[PATH_SIZE];
 
-    // NOTE: build paths to dll files
+    // NOTE: build paths to our runtime library (hotloaded_main.c) files
     {
         int bytesCopied;
         bytesCopied = TextCopy(mainDllPath, basePath);
@@ -39,6 +39,7 @@ int main(int argumentCount, char *argumentArray[])
         long dllFileWriteTime = GetFileModTime(mainDllPath);
         if (dllFileWriteTime != gameCode.lastDllWriteTime)
         {
+            gameCode.hotUnload(&gameState);
             Win32UnloadGameCode(&gameCode);
             gameCode = Win32LoadGameCode(mainDllPath, tempDllPath);
             gameCode.hotReload(&gameState);
