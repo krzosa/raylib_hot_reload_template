@@ -6,7 +6,7 @@ void Update(GameState *gameState)
     BeginDrawing();
     {
         ClearBackground((Color){0, 0, 0, 100});
-        DrawRectangle(100, 100, 100, 100, (Color){150, 255, 255, 255});
+        DrawRectangle(500, 100, 100, 100, (Color){0, 255, 255, 255});
     }
     EndDrawing();
 }

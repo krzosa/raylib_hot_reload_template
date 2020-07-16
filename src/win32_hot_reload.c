@@ -1,3 +1,7 @@
+#include "WinDef.h"
+#include "winbase.h"
+#include "libloaderapi.h"
+
 // NOTE: prototypes for function pointers
 typedef void Initialize(GameState *gameState); // called at the beginning of the app
 typedef void HotReload(GameState *gameState); // called when you recompile the program while its running
@@ -11,7 +15,7 @@ void HotReloadStub(GameState *gameState){}
 void HotUnloadStub(GameState *gameState){} 
 void UpdateStub(GameState *gameState){}
 
-typedef struct Win32GameCode
+typedef struct GameCode
 {
     HMODULE library;
     long lastDllWriteTime;
@@ -22,14 +26,14 @@ typedef struct Win32GameCode
     HotReload *hotReload;
     HotUnload *hotUnload;
     Update *update;
-} Win32GameCode;
+} GameCode;
 
 // Creates a copy of the main dll, and loads that copy
 // if load fails it substitutes the loaded function with a stub(empty function)
-static Win32GameCode
-Win32LoadGameCode(char *mainDllPath, char *tempDllPath)
+static GameCode
+GameCodeLoad(char *mainDllPath, char *tempDllPath)
 {
-    Win32GameCode result;
+    GameCode result;
     result.lastDllWriteTime = GetFileModTime(tempDllPath);
 
     CopyFileA((LPCSTR)mainDllPath, (LPCSTR)tempDllPath, FALSE);
@@ -45,7 +49,7 @@ Win32LoadGameCode(char *mainDllPath, char *tempDllPath)
         result.hotUnload = (HotUnload *)GetProcAddress(result.library, "HotUnload");
         result.update = (Update *)GetProcAddress(result.library, "Update");
 
-        result.isValid = (result.update != 0) &&
+        result.isValid = (result.update != 0) && (result.hotUnload != 0) &&
                         (result.hotReload != 0) && (result.initialize != 0);
     }
 
@@ -66,7 +70,7 @@ Win32LoadGameCode(char *mainDllPath, char *tempDllPath)
 
 /* Unloads the dll and nulls the pointers to functions from the dll */
 static void
-Win32UnloadGameCode(Win32GameCode *GameCode)
+GameCodeUnload(GameCode *GameCode)
 {
     if (GameCode->library)
     {

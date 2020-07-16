@@ -1,10 +1,8 @@
 #include "shared.h"
-/* WIN32 */
-#include "WinDef.h"
-#include "winbase.h"
-#include "libloaderapi.h"
 #include "win32_hot_reload.c"
-#define PATH_SIZE 1024 // might overflow, not a good idea to ship a game with this :)
+
+// NOTE: might overflow, not a good idea to ship a game with this :)
+#define PATH_SIZE 1024
 
 
 int main(int argumentCount, char *argumentArray[])
@@ -28,20 +26,21 @@ int main(int argumentCount, char *argumentArray[])
         TraceLog(LOG_INFO, tempDllPath);
     }
 
-    Win32GameCode gameCode = {0};
-    gameCode = Win32LoadGameCode(mainDllPath, tempDllPath);
+    GameCode gameCode = {0};
+    gameCode = GameCodeLoad(mainDllPath, tempDllPath);
 
     GameState gameState = {0};
     gameCode.initialize(&gameState);
 
     while(!WindowShouldClose())
     {
+        // NOTE: Check if the code got recompiled (check if dynamic library changed)
         long dllFileWriteTime = GetFileModTime(mainDllPath);
         if (dllFileWriteTime != gameCode.lastDllWriteTime)
         {
             gameCode.hotUnload(&gameState);
-            Win32UnloadGameCode(&gameCode);
-            gameCode = Win32LoadGameCode(mainDllPath, tempDllPath);
+            GameCodeUnload(&gameCode);
+            gameCode = GameCodeLoad(mainDllPath, tempDllPath);
             gameCode.hotReload(&gameState);
         }
 
