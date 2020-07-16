@@ -54,7 +54,7 @@ GameCodeLoad(char *mainDllPath, char *tempDllPath)
                         (result.hotReload != 0) && (result.initialize != 0);
     }
 
-    // NOTE: if functions failed to load, load the stubs
+    // NOTE: if functions failed to load, load the empty functions
     if (result.isValid == 0)
     {
         result.update = UpdateStub;

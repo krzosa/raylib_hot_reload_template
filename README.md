@@ -1,6 +1,6 @@
 ## Info
 
-Template for a game/game engine (GCC compiler / MSVC compiler)(64 bit)
+Template for a game/game engine (GCC compiler / MSVC compiler)
 
 * Sets up hot reload, so we can recompile the code while the application is running and automatically apply the changes without losing game state, very convenient for games and doesn't impact performance. 
 * Sets up raylib (which is an amazing library for developing games)so that the library is as easy to modify as possible, it's very easy to switch versions and you dont have to download it separately.

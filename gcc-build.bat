@@ -16,7 +16,9 @@ cd ..
 REM Comments
 REM -o - change file name
 REM -shared - compile as a shared / dynamic library
-REM -libraylib.dll.a - raylib static library it allows us to use raylib without loading
+REM -libraylib.dll.a - raylib static library it allows us to use raylib dll without loading
 REM                     anything explicitly
 
+REM copy - this prevents the game from loading a uncomplete dll by first creating a
+REM         temp dll which then is copied into game_code.dll
 REM -lwinmm -lopengl32 -lgdi32 - system libraries which raylib uses
