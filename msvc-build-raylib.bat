@@ -1,4 +1,5 @@
 @echo off
+mkdir bin
 
 set LIBRARIES=kernel32.lib user32.lib shell32.lib winmm.lib gdi32.lib opengl32.lib
 set RAYLIB=core.c models.c raudio.c rglfw.c shapes.c text.c textures.c utils.c -I.\external\glfw\include

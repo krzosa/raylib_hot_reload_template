@@ -1,4 +1,5 @@
 @echo off
+mkdir bin
 
 cd src\raylib\src
 
