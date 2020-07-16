@@ -36,6 +36,7 @@ GameCodeLoad(char *mainDllPath, char *tempDllPath)
     GameCode result;
     result.lastDllWriteTime = GetFileModTime(tempDllPath);
 
+    // NOTE: Prevent locking the main dll by making a copy and loading that copy
     CopyFileA((LPCSTR)mainDllPath, (LPCSTR)tempDllPath, FALSE);
     
     result.library = LoadLibraryA(tempDllPath);

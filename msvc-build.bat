@@ -8,12 +8,14 @@ set DLL_NAME=game_code.dll
 
 cd bin
 
-cl ..\src\hotloaded_main.c /LD -Fe:%DLL_NAME% %COMMON_FLAGS% %LINKER_FLAGS% %EXPORTED_FUNCTIONS%
-cl ..\src\executable_main.c -D_AMD64_ -Fe:%EXE_NAME% %COMMON_FLAGS% %LINKER_FLAGS%
+cl ..\src\hotloaded_main.c /LD /Fe:%DLL_NAME% %COMMON_FLAGS% %LINKER_FLAGS% %EXPORTED_FUNCTIONS%
+cl ..\src\executable_main.c /D_AMD64_ /Fe:%EXE_NAME% %COMMON_FLAGS% %LINKER_FLAGS%
 
 cd ..
 
+REM Comments
 REM /LD   - create a dll file, dynamic library
 REM /Zi   - generate debugger files
+REM /Fe   - change file name
 REM -incremental:no -opt:ref - https://docs.microsoft.com/en-us/cpp/build/reference/incremental-link-incrementally?view=vs-2019
 REM -D_AMD64_ - define a _AMD64_ macro, wouldnt work without this

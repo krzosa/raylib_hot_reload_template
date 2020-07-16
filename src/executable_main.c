@@ -34,7 +34,7 @@ int main(int argumentCount, char *argumentArray[])
 
     while(!WindowShouldClose())
     {
-        // NOTE: Check if the code got recompiled (check if dynamic library changed)
+        // NOTE: Check if the code got recompiled 
         long dllFileWriteTime = GetFileModTime(mainDllPath);
         if (dllFileWriteTime != gameCode.lastDllWriteTime)
         {
