@@ -5,6 +5,7 @@ Template for a game/game engine (GCC compiler / MSVC compiler)
 * Sets up hot reload, so we can recompile the code while the application is running and automatically apply the changes without losing game state, very convenient for games and doesn't impact performance. 
 * Sets up raylib (which is an amazing library for developing games)so that the library is as easy to modify as possible, it's very easy to switch versions and you dont have to download it separately.
 * Sets up compiling scripts for msvc compiler (compiler from windows build tools / visual studio) and gcc compiler packaged along with raylib.
+* Easy to port, you need to replace win32_hot_reload with linux calls, not a lot of code to replace there.
 
 ## How to run:
 
