@@ -31,10 +31,19 @@ typedef struct GameCode
 // Creates a copy of the main dll, and loads that copy
 // if load fails it substitutes the loaded function with a stub(empty function)
 static GameCode
-GameCodeLoad(char *mainDllPath, char *tempDllPath)
+GameCodeLoad(char *mainDllPath, char *tempDllPath, char *lockFilePath)
 {
+    // Load only after the lockfile gets deleted!
+    // That way we won't load half compiled code. 
+    while(FileExists(lockFilePath)) 
+    {
+        // You need to provide Sleep if you are porting to Linux
+        // takes in milliseconds
+        Sleep(50);
+    }
+
     GameCode result;
-    result.lastDllWriteTime = GetFileModTime(tempDllPath);
+    result.lastDllWriteTime = GetFileModTime(mainDllPath);
 
     // NOTE: Prevent locking the main dll by making a copy and loading that copy
     CopyFileA((LPCSTR)mainDllPath, (LPCSTR)tempDllPath, FALSE);

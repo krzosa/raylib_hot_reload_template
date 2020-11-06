@@ -6,12 +6,15 @@ set COMMON_FLAGS=/Zi /nologo
 set EXE_NAME=game.exe
 set DLL_NAME=game_code.dll
 
-cd bin
+call msvc_upgrade_cmd_64.bat
+cd ..\bin
 
+echo LOCKFILE IN AID OF HOTLOADING > lock.file
 cl ..\src\hotloaded_main.c /LD /Fe:%DLL_NAME% %COMMON_FLAGS% %LINKER_FLAGS% %EXPORTED_FUNCTIONS%
+del lock.file
 cl ..\src\executable_main.c /D_AMD64_ /Fe:%EXE_NAME% %COMMON_FLAGS% %LINKER_FLAGS%
 
-cd ..
+cd ..\scripts
 
 REM Comments
 REM /LD   - create a dll file, dynamic library
