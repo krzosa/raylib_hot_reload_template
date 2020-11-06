@@ -8,11 +8,11 @@ Template for a game/game engine (GCC compiler / MSVC compiler)
 
 ## How to run:
 
-You need either the gcc compiler (which is packaged with raylib installation) or the msvc compiler (which you can find how to setup here https://hero.handmade.network/episode/code/day001/) the compiler needs to be on your system path so that the system can find it.
+You need either the gcc compiler (which is packaged with raylib installation) or the msvc compiler, just download Visual Studio Community 2019 and it should work just run build script, If you have any trouble with that checkout Casey Muratori's intro to Windows programming https://hero.handmade.network/episode/code/day001/ the compiler needs to be on your system path so that the system can find it.
 
-1. After you get the compiler, run the build-raylib script of your choice, which is going to create a dynamic library of raylib, that library is going to get copied into the bin folder. 
-2. Call the build script of your choice.
-3. Call the run script or execute the binary manually.
+1. Run build.bat
+2. Run run.bat 
+3. Done
 
 ## Structure
 
