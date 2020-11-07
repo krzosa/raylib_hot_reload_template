@@ -953,6 +953,27 @@ void SetWindowPosition(int x, int y)
 #endif
 }
 
+void SetWindowTransparency(float level)
+{
+#if defined(PLATFORM_DESKTOP)
+    glfwSetWindowOpacity(CORE.Window.handle, level);
+#endif
+}
+
+void SetWindowFloating(bool isFloating)
+{
+#if defined(PLATFORM_DESKTOP)
+    glfwSetWindowAttrib(CORE.Window.handle, GLFW_FLOATING, isFloating);
+#endif
+}
+
+void SetWindowDecoration(bool isDecorated)
+{
+#if defined(PLATFORM_DESKTOP)
+    glfwSetWindowAttrib(CORE.Window.handle, GLFW_DECORATED, isDecorated);
+#endif
+}
+
 // Set monitor for the current window (fullscreen mode)
 void SetWindowMonitor(int monitor)
 {

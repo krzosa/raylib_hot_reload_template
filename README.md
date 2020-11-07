@@ -34,6 +34,18 @@ and a dynamic (or shared) library is a library that can by loaded at runtime of 
 
 The raylib shared library on the other hand is linked using a .lib/.a file at compile time, it's not loaded while the application is running. But it still has the properties of a dynamic or a "shared" library meaning that it has it's own internal state that it shares with the executable thanks to that we can easily use that library without losing any state when things get recompiled from our hotloaded dynamic library because we have all the function addresses through linking the .lib file. amazin
 
+## How to speed up compilation
+
+If you are compiling for a second time you can omit compiling both raylib and the executable_main.c, just comment out compiling in build.bat and gcc-build.bat/msvc-build.bat.
+Comment this out in gcc-build.bat
+``` 
+gcc ..\src\executable_main.c -o game.exe libraylib.dll.a -lgdi32 -lwinmm 
+```
+Comment this out in build.bat
+``` 
+call gcc-build-raylib.bat 
+```
+
 ## Source of the idea
 
 https://hero.handmade.network/episode/code/day021/

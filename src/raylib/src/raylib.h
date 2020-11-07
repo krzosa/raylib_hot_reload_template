@@ -868,6 +868,11 @@ extern "C" {            // Prevents name mangling of functions
 // Window and Graphics Device Functions (Module: core)
 //------------------------------------------------------------------------------------
 
+// (KKrzosa): Non Raylib functions
+RLAPI void SetWindowTransparency(float level);
+RLAPI void SetWindowFloating(bool isFloating);
+RLAPI void SetWindowDecoration(bool isDecorated);
+
 // Window-related functions
 RLAPI void InitWindow(int width, int height, const char *title);  // Initialize window and OpenGL context
 RLAPI bool WindowShouldClose(void);                               // Check if KEY_ESCAPE pressed or Close icon pressed

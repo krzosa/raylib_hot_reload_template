@@ -12,7 +12,11 @@ cd src\raylib\src
 
 cl /LD %RAYLIB_DEFINES%  /Fe: "raylib" %RAYLIB% /link %LIBRARIES%
 
-copy raylib.h   ..
+copy raylib.h        ..
+copy rmem.h          ..
+copy physac.h        ..
+copy raymath.h       ..
+
 copy raylib.dll ..\..\..\bin
 copy raylib.lib ..\..\..\bin
 
